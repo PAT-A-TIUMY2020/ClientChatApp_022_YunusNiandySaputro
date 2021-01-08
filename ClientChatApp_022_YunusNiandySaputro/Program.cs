@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,12 +11,35 @@ namespace ClientChatApp_022_YunusNiandySaputro
     {
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World!");
-            Console.ReadKey();
+            InstanceContext context = new InstanceContext(new ClientCallback());
+            ServiceReference1.ServiceCallbackClient server = new ServiceReference1.ServiceCallbackClient(context);
 
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
+            Console.WriteLine("Enter Username");
+            string nama = Console.ReadLine();
+            server.gabung(nama);
+
+            Console.WriteLine("Kirim pesan");
+            string pesan = Console.ReadLine();
+
+            //check pesan
+            while (true)
+            {
+                if (!string.IsNullOrEmpty(pesan))
+                    server.kirimPesan(pesan);
+                Console.WriteLine("Kirim Pesan");
+                pesan = Console.ReadLine();
+            }
+
+        }
+
+        
+    }
+
+    public class ClientCallback : ServiceReference1.IServiceCallbackCallback // sebagai context channel
+    {
+        public void pesanKirim(string user, string pesan)
+        {
+            Console.WriteLine("{0}: {1}", user, pesan);
         }
     }
 }
